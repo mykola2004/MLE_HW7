@@ -30,27 +30,27 @@ Keep in mind that you may need to pass the path to your config to the scripts. F
 Please note, some IDEs, including VSCode, may have problems detecting environment variables defined in the .env file. This is usually due to the extension handling the .env file. If you're having problems, try to run your scripts in a debug mode, or, as a workaround, you can hardcode necessary parameters directly into your scripts. Make sure not to expose sensitive data if your code is going to be shared or public. In such cases, consider using secret management tools provided by your environment.
 
 ## Data:
-It is unnecessary part , as you will already have data folder filled with datasets(for training and inferencing) after cloning the repository. But still you are able to do that.
-Data is the cornerstone of any Machine Learning project. For generating the data, use the script located at `data_process/data_generation.py`. The loaded and saved data is used to train the model and to test the inference. Following the approach of separating concerns, the responsibility of data generation lies with this script.
+Data is already stored in folder "/data", it is prepared for training and inferencing.
 
 ## Training:
 The training phase of the ML pipeline includes preprocessing of data, the actual training of the model, and the evaluation and validation of the model's performance. All of these steps are performed by the script `training/train.py`.
 
 To train the model using Docker: 
 
-- Build the training Docker image. If the built is successfully done, it will automatically train the model:
+- Build the training Docker image.
 ```bash
 docker build -f training/Dockerfile -t training_image .
 ```
-- Then run the container(that will trigger: training model, printing all logs related to model's perfomance, saving model inside container):
+- Then run the container(that will trigger: training model, printing all logs related to model's perfomance during training, saving model inside container):
 ```bash
 docker run training_image
 ```
-- Then, move the trained model from the directory inside the Docker container `/app/models` to the local machine using:
+- Then, move the trained model from the directory inside the Docker container `/app/models` to the local machine using command:
 ```bash
-docker cp <container_id>:/app/models/trained_model.pickle ./models
+docker cp <container_id>:/app/models ./models
 ```
 Replace `<container_id>` with your running Docker container ID.
+After that ensure that you have your model saved in the `/models` directory.
 
 ## Inference:
 Once a model has been trained, it can be used to make predictions on new data in the inference stage. The inference stage is implemented in `inference/run.py`.
@@ -61,7 +61,7 @@ To run the inference using Docker, use the following commands:
 ```bash
 docker build -f inference/Dockerfile -t inference_image .
 ```
-- Run the inference Docker container(that will cause model to predict values on unseen during data - inference dataset, the results will be saved):
+- Run the inference Docker container(that will cause model to predict values on unseen during data - inference dataset, the results will be saved inside container):
 ```bash
 docker run inference_image
 ```
@@ -70,4 +70,4 @@ docker run inference_image
 docker cp <container_id>:/app/results ./results
 ```
 Replace `<container_id>` with your running Docker container ID.
-After that ensure that you have your results in the `results` directory.
+After that ensure that you have your results in the `/results` directory.
